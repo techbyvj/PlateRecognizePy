@@ -5,13 +5,13 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="PlateRecognizePy",
-    version="0.1.0",
+    version="0.1.1",
     author="VJ",
     author_email="",
     description="A Python library for license plate detection and recognition",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/lpr",
+    url="https://github.com/techbyvj/PlateRecognizePy",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 3 - Alpha",
