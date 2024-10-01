@@ -4,11 +4,11 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="lpr",
+    name="PlateRecognizePy",
     version="0.1.0",
     author="VJ",
     author_email="",
-    description="A library for license plate detection and recognition",
+    description="A Python library for license plate detection and recognition",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/yourusername/lpr",
