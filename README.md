@@ -50,6 +50,8 @@ license_plate, text = process_license_plate(image)
 print(f"Detected license plate: {text}")
 ```
 
+For more detailed examples and the full source code, you can check out the [License plate recognition Python](https://github.com/techbyvj/license-plate-recognition-python).
+
 ### Indian Number Plate Recognition
 
 PlateRecognizePy is optimized for Indian number plates:
