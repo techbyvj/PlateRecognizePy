@@ -6,6 +6,7 @@ import time
 from datetime import datetime
 import cv2
 import numpy as np
+from ultralytics import YOLO
 
 
 # Set up logging
@@ -14,34 +15,67 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # Define what can be imported from this module
 __all__ = ['process_license_plate']
 
-def process_license_plate(image):
-    license_plate = detect_license_plate(image)
+
+def detect_license_plate_yolov8(image):
+    # Initialize YOLOv8 model
+    model = YOLO('yolov8n.pt')  # or use a custom trained model for license plates
+
+    # Perform detection
+    results = model(image)
+
+    # Process results
+    for result in results:
+        boxes = result.boxes.xyxy.cpu().numpy().astype(int)
+        if len(boxes) > 0:
+            # Assuming the largest detected object is the license plate
+            x1, y1, x2, y2 = boxes[0]
+            license_plate = image[y1:y2, x1:x2]
+            return license_plate
+
+    return None
+
+def process_license_plate(image, config=None):
+    if config is None:
+        config = {}
+    save_output = config.get('save_output', True)
+    output_dir = config.get('output_dir', 'output')
+
+    license_plate = detect_license_plate_yolov8(image)
     if license_plate is None:
-        logging.warning("No license plate detected")
+        logging.warning("No license plate detected using YOLOv8")
         return None, None
     
     text = recognize_text(license_plate)
     
-    # Create output folder and save images
-    current_date = datetime.now().strftime("%Y-%m-%d")
-    output_folder = os.path.join("output", current_date)
-    os.makedirs(output_folder, exist_ok=True)
+    if text is None:
+        license_plate = detect_license_plate(image)
+        if license_plate is None:
+            logging.warning("No license plate detected")
+            return None, None
+        
+        text = recognize_text(license_plate)
     
-    # Save original image
-    original_filename = f"original_{int(time.time())}.jpg"
-    original_path = os.path.join(output_folder, original_filename)
-    cv2.imwrite(original_path, image)
-    logging.info(f"Original image saved as {original_path}")
-    
-    # Save license plate image
-    if text and text != "unknown":
-        sanitized_text = ''.join(c for c in text if c.isalnum())
-        plate_filename = f"plate_{sanitized_text}_{int(time.time())}.jpg"
-    else:
-        plate_filename = f"plate_unrecognized_{int(time.time())}.jpg"
-    plate_path = os.path.join(output_folder, plate_filename)
-    cv2.imwrite(plate_path, license_plate)
-    logging.info(f"License plate image saved as {plate_path}")
+    if save_output:
+        # Create output folder and save images
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        output_folder = os.path.join(output_dir, current_date)
+        os.makedirs(output_folder, exist_ok=True)
+        
+        # Save original image
+        original_filename = f"original_{int(time.time())}.jpg"
+        original_path = os.path.join(output_folder, original_filename)
+        cv2.imwrite(original_path, image)
+        logging.info(f"Original image saved as {original_path}")
+        
+        # Save license plate image
+        if text and text != "unknown":
+            sanitized_text = ''.join(c for c in text if c.isalnum())
+            plate_filename = f"plate_{sanitized_text}_{int(time.time())}.jpg"
+        else:
+            plate_filename = f"plate_unrecognized_{int(time.time())}.jpg"
+        plate_path = os.path.join(output_folder, plate_filename)
+        cv2.imwrite(plate_path, license_plate)
+        logging.info(f"License plate image saved as {plate_path}")
     
     if text:
         logging.info(f"Detected license plate text: {text}")
@@ -105,6 +139,7 @@ def recognize_text(image):
         logging.info(f"Text recognized by EasyOCR: {text}")
     else:
         logging.warning("Both Tesseract and EasyOCR failed to recognize text")
+        return None
     
     return text.strip()
 

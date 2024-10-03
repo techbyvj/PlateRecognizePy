@@ -4,10 +4,10 @@ PlateRecognizePy is a Python library for license plate detection and recognition
 
 ## Features
 
-- License plate detection in images
+- License plate detection in images using YOLOv8 (with OpenCV as fallback)
 - Text recognition from license plates
 - Support for both Tesseract OCR and EasyOCR
-- Automatic saving of original and processed images
+- Configurable output saving and directory
 - Logging of detection and recognition results
 - Specialized support for Indian number plates:
   - Recognition of both white and yellow plates
@@ -30,6 +30,7 @@ PlateRecognizePy requires Python 3.7 or later. The main dependencies are:
 - [easyocr](https://pypi.org/project/easyocr/)
 - [opencv-python](https://pypi.org/project/opencv-python/)
 - [numpy](https://pypi.org/project/numpy/)
+- [ultralytics](https://pypi.org/project/ultralytics/)
 
 For a complete list of dependencies, please refer to the `setup.py` file.
 
@@ -45,10 +46,19 @@ import cv2
 image = cv2.imread('path/to/your/image.jpg')
 
 # Process the image
-license_plate, text = process_license_plate(image)
+config = {
+    'save_output': True,
+    'output_dir': 'custom_output'
+}
+license_plate, text = process_license_plate(image, config)
 
 print(f"Detected license plate: {text}")
 ```
+
+The `process_license_plate` function now accepts an optional `config` dictionary with the following options:
+
+- `save_output`: Boolean to control whether to save the output images (default: True)
+- `output_dir`: String specifying the directory to save output images (default: 'output')
 
 For more detailed examples and the full source code, you can check out the [License plate recognition Python](https://github.com/techbyvj/license-plate-recognition-python).
 
@@ -109,6 +119,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - OpenCV for image processing capabilities
 - Tesseract and EasyOCR for text recognition
+- YOLOv8 for object detection
 
 PlateRecognizePy is developed by VJ. For any questions or support, please open an issue on the GitHub repository or reach out on [X (Twitter) @saidbyvj](https://x.com/saidbyvj).
 
@@ -135,4 +146,6 @@ While PlateRecognizePy performs well in most scenarios, users should be aware of
 
 We are continuously working to improve PlateRecognizePy, with planned enhancements including:
 
-- Support for more international
+- Support for more international license plate formats
+- Integration with more advanced OCR technologies
+- Performance optimizations for faster processing
