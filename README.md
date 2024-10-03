@@ -110,7 +110,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - OpenCV for image processing capabilities
 - Tesseract and EasyOCR for text recognition
 
-PlateRecognizePy is developed by VJ. For any questions or support, please open an issue on the GitHub repository.
+PlateRecognizePy is developed by VJ. For any questions or support, please open an issue on the GitHub repository or reach out on [X (Twitter) @saidbyvj](https://x.com/saidbyvj).
 
 ## Performance and Accuracy
 
